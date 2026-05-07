@@ -1,0 +1,33 @@
+{{> menu}}
+
+<div class="ui container" style="margin-top: 30px;">
+  <h1 class="ui header">Dashboard</h1>
+  <p>Browse all available collections</p>
+
+  <div class="ui grid">
+    {{#each collections}}
+      <div class="four wide column">
+        <div class="ui card" style="width: 100%; cursor: pointer;" onclick="window.location='/collection/{{id}}'">
+          <div class="image">
+            <img src="{{image}}" alt="{{name}}" style="height: 180px; object-fit: cover;">
+          </div>
+          <div class="content">
+            <div class="header">{{name}}</div>
+            <div class="meta">
+              <span class="ui tiny label">{{type}}</span>
+            </div>
+            <div class="description">
+              {{items.length}} skins
+            </div>
+          </div>
+        </div>
+      </div>
+    {{/each}}
+  </div>
+
+  {{#if collections.length}}
+    <!-- collections exist -->
+  {{else}}
+    <p>No collections found yet.</p>
+  {{/if}}
+</div>

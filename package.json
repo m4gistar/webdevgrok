@@ -1,0 +1,23 @@
+{
+  "name": "ca1-app",
+  "version": "1.0.0",
+  "description": "CA1 starter app",
+  "type": "module",
+  "main": "server.js",
+  "scripts": {
+    "start": "nodemon --ignore \"models/app-store.json\" server.js"
+  },
+  "keywords": [
+    "node",
+    "express"
+  ],
+  "dependencies": {
+    "express": "^5.2.1",
+    "express-handlebars": "^8.0.4",
+    "lowdb": "^7.0.1",
+    "winston": "^3.19.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.11"
+  }
+}

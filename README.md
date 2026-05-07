@@ -1,0 +1,42 @@
+# Assignment 1 Starter Project
+
+Use this starter project as the basis for Assignment One
+
+You should: 
+
+- Download this project from GitHub as a ZIP file
+- Complete the CA1 starter lab to set up your own GitHub repo for Assignment 1
+- Edit the files with your own content
+
+{
+  "collections": [
+    {
+      "id": 1,
+      "name": "Prisma 2 Collection",
+      "type": "official",
+      "image": "/uploads/collections/prisma2_collection.png",
+      "items": []
+    },
+    {
+      "id": 2,
+      "name": "Recoil Collection",
+      "type": "official",
+      "image": "/uploads/collections/recoil_collection.png",
+      "items": []
+    },
+    {
+      "id": 3,
+      "name": "Broken Fang Collection",
+      "type": "official",
+      "image": "/uploads/collections/brokenfang_collection.png",
+      "items": []
+    }
+  ],
+  "guns": {
+    "pistols": ["Glock-18", "USP-S", "P2000", "P250", "Five-SeveN", "Tec-9", "CZ75-Auto", "Dual Berettas", "Desert Eagle", "R8 Revolver"],
+    "rifles": ["AK-47", "M4A4", "M4A1-S", "FAMAS", "Galil AR", "SG 553", "AUG"],
+    "snipers": ["AWP", "SSG 08", "SCAR-20", "G3SG1"],
+    "smgs": ["MAC-10", "MP9", "MP7", "MP5-SD", "UMP-45", "P90", "PP-Bizon"],
+    "heavy": ["XM1014", "Nova", "MAG-7", "Sawed-Off", "M249", "Negev"]
+  }
+}

@@ -1,0 +1,58 @@
+{{> menu}}
+
+<div class="ui container" style="margin-top: 30px;">
+
+  <a href="/dashboard" class="ui button">← Back to Dashboard</a>
+
+  <div class="ui segment">
+    <h1 class="ui header">{{collection.name}}</h1>
+    <img src="{{collection.image}}" alt="{{collection.name}}" style="max-height: 300px; width: 100%; object-fit: cover; border-radius: 8px;">
+    <p><strong>Type:</strong> {{collection.type}}</p>
+  </div>
+
+  <h2 class="ui header">Skins ({{collection.items.length}})</h2>
+
+  <button class="ui primary button" onclick="showAddSkinForm({{collection.id}})">
+    + Add New Skin
+  </button>
+
+  <div class="ui grid" style="margin-top: 20px;">
+    {{#each collection.items}}
+      <div class="four wide column">
+        <div class="ui card">
+          <div class="content">
+            <!-- Fixed Rarity Color -->
+            <div class="header" style="color: {{#if (eq rarity 'Covert')}}#ef4444{{else if (eq rarity 'Classified')}}#ec4899{{else if (eq rarity 'Restricted')}}#a855f7{{else if (eq rarity 'Mil-Spec')}}#3b82f6{{else if (eq rarity 'Industrial')}}#94a3b8{{else}}#d1d5db{{/if}};">
+              {{gun}} | {{skinname}}
+            </div>
+            <div class="meta">
+              <span class="ui tiny label" style="background-color: {{#if (eq rarity 'Covert')}}#ef4444{{else if (eq rarity 'Classified')}}#ec4899{{else if (eq rarity 'Restricted')}}#a855f7{{else if (eq rarity 'Mil-Spec')}}#3b82f6{{else if (eq rarity 'Industrial')}}#94a3b8{{else}}#d1d5db{{/if}}; color: white;">
+                {{rarity}}
+              </span>
+            </div>
+          </div>
+          <div class="extra content">
+            <button class="ui tiny button" onclick="editSkin({{../collection.id}}, {{id}})">Edit</button>
+            <button class="ui tiny red button" onclick="deleteSkin({{../collection.id}}, {{id}})">Delete</button>
+          </div>
+        </div>
+      </div>
+    {{/each}}
+  </div>
+</div>
+
+<!-- Add Skin Modal -->
+<div id="addSkinModal" class="ui modal">
+  <div class="header">Add New Skin to {{collection.name}}</div>
+  <div class="content">
+    <form id="addSkinForm" action="" method="POST" class="ui form">
+
+      <div class="field">
+        <label>Gun</label>
+        <select name="gun" required>
+          <option value="">Select a Gun...</option>
+          {{#each guns.all}}
+            <option value="{{this}}">{{this}}</option>
+          {{/each}}
+       
+       
