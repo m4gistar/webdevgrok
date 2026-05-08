@@ -1,0 +1,51 @@
+{{> menu}}
+
+<div class="ui container" style="margin-top: 40px;">
+
+  <h1 class="ui header">About SkinB4se</h1>
+
+  <div class="ui grid">
+    <!-- Left: Info Text -->
+    <div class="ten wide column">
+      <div class="ui segment">
+        <p style="font-size: 1.1em; line-height: 1.7;">
+          This webapp is inspired by 
+          <a href="https://stash.clash.gg" target="_blank">CS2 Stash</a> 
+          and 
+          <a href="https://csfloat.com/trade-up" target="_blank">CSFloat Trade-up</a>.
+        </p>
+        <p>
+          It is made by <strong>Filip Radocaj</strong><br>
+          GitHub: <a href="https://github.com/m4gistar" target="_blank">@m4gistar</a>
+        </p>
+      </div>
+    </div>
+
+    <!-- Right: Map Image -->
+    <div class="six wide column">
+      <img src="/uploads/info/setumap.png" alt="Location Map" style="width: 100%; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
+    </div>
+  </div>
+
+  <!-- Email Request Section -->
+  <div class="ui segment" style="margin-top: 40px;">
+    <h3 id="request-title" class="ui header" style="color: black !important;">
+      New CS2 Update? Request it here to be officially added!
+    </h3>
+    
+    <form action="https://formspree.io/f/your-form-id" method="POST" class="ui form">
+      <div class="field">
+        <label>Your Email</label>
+        <input type="email" name="email" placeholder="your.email@example.com" required>
+      </div>
+      <div class="field">
+        <label>Request / Suggestion</label>
+        <textarea name="message" rows="6" placeholder="e.g. Please add the new Anubis Collection..." required></textarea>
+      </div>
+      <button type="submit" class="ui primary button">Send Request</button>
+    </form>
+  </div>
+
+</div>
+
+{{> footer}}

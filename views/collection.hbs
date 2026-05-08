@@ -21,18 +21,20 @@
       <div class="four wide column">
         <div class="ui card">
           <div class="content">
-            <!-- Fixed Rarity Color -->
-            <div class="header" style="color: {{#if (eq rarity 'Covert')}}#ef4444{{else if (eq rarity 'Classified')}}#ec4899{{else if (eq rarity 'Restricted')}}#a855f7{{else if (eq rarity 'Mil-Spec')}}#3b82f6{{else if (eq rarity 'Industrial')}}#94a3b8{{else}}#d1d5db{{/if}};">
+            <!-- Skin Name - Normal Black Text -->
+            <div class="header" style="color: black; font-weight: bold;">
               {{gun}} | {{skinname}}
             </div>
-            <div class="meta">
-              <span class="ui tiny label" style="background-color: {{#if (eq rarity 'Covert')}}#ef4444{{else if (eq rarity 'Classified')}}#ec4899{{else if (eq rarity 'Restricted')}}#a855f7{{else if (eq rarity 'Mil-Spec')}}#3b82f6{{else if (eq rarity 'Industrial')}}#94a3b8{{else}}#d1d5db{{/if}}; color: white;">
+            
+            <!-- Rarity Label -->
+            <div class="meta" style="margin-top: 8px;">
+              <span class="ui tiny label rarity-label" 
+                    style="font-weight: bold; padding: 6px 12px; color: white;">
                 {{rarity}}
               </span>
             </div>
           </div>
           <div class="extra content">
-            <button class="ui tiny button" onclick="editSkin({{../collection.id}}, {{id}})">Edit</button>
             <button class="ui tiny red button" onclick="deleteSkin({{../collection.id}}, {{id}})">Delete</button>
           </div>
         </div>
@@ -54,5 +56,68 @@
           {{#each guns.all}}
             <option value="{{this}}">{{this}}</option>
           {{/each}}
-       
-       
+        </select>
+      </div>
+
+      <div class="field">
+        <label>Skin Name</label>
+        <input type="text" name="skinname" placeholder="e.g. Panthera onca" required>
+      </div>
+
+      <div class="field">
+        <label>Rarity</label>
+        <select name="rarity" required style="font-weight: bold;">
+          <option value="">Select Rarity...</option>
+          <option value="Consumer" style="background-color: #d1d5db; color: black;">Consumer</option>
+          <option value="Industrial" style="background-color: #94a3b8; color: black;">Industrial</option>
+          <option value="Mil-Spec" style="background-color: #3b82f6; color: white;">Mil-Spec</option>
+          <option value="Restricted" style="background-color: #a855f7; color: white;">Restricted</option>
+          <option value="Classified" style="background-color: #ec4899; color: white;">Classified</option>
+          <option value="Covert" style="background-color: #ef4444; color: white;">Covert</option>
+        </select>
+      </div>
+    </form>
+  </div>
+
+  <div class="actions">
+    <button class="ui button" onclick="hideAddSkinModal()">Cancel</button>
+    <button class="ui primary button" onclick="submitAddSkinForm()">Add Skin</button>
+  </div>
+</div>
+
+<script>
+function showAddSkinForm(collectionId) {
+  document.getElementById('addSkinForm').action = `/collection/${collectionId}/add-skin`;
+  document.getElementById('addSkinModal').classList.add('active');
+}
+
+function hideAddSkinModal() {
+  document.getElementById('addSkinModal').classList.remove('active');
+}
+
+function submitAddSkinForm() {
+  document.getElementById('addSkinForm').submit();
+}
+
+function deleteSkin(collectionId, skinId) {
+  if (confirm("Delete this skin?")) {
+    window.location.href = `/collection/${collectionId}/delete-skin/${skinId}`;
+  }
+}
+
+// Apply rarity colors using JavaScript (no helpers)
+document.addEventListener('DOMContentLoaded', function() {
+  const labels = document.querySelectorAll('.rarity-label');
+  labels.forEach(label => {
+    const text = label.textContent.trim();
+    if (text === 'Covert') label.style.backgroundColor = '#ef4444';
+    else if (text === 'Classified') label.style.backgroundColor = '#ec4899';
+    else if (text === 'Restricted') label.style.backgroundColor = '#a855f7';
+    else if (text === 'Mil-Spec') label.style.backgroundColor = '#3b82f6';
+    else if (text === 'Industrial') label.style.backgroundColor = '#94a3b8';
+    else label.style.backgroundColor = '#d1d5db';
+  });
+});
+</script>
+
+{{> footer}}

@@ -1,14 +1,54 @@
-html {
-  box-sizing: border-box;
-  font-size: 16px;
-}
-
-*, *:before, *:after {
-  box-sizing: inherit;
-}
-
+/* ====================== Global Styles ====================== */
 body {
-  font-family: "Benton Sans", "Helvetica Neue", helvetica, arial, sans-serif;
-  margin: 2em;
-  background-color: lightgrey;
+    background-color: #001F3F;           /* Navy Background */
+    color: #ffffff;
+    font-family: 'Segoe UI', system-ui, sans-serif;
+}
+
+/* Navbar - CS2 Orange */
+.ui.menu {
+    background-color: #FF6600;
+}
+
+.ui.menu .header.item a,
+.ui.menu .item {
+    color: #001F3F !important;
+    font-weight: bold;
+}
+
+/* Main Titles - Gray Text (no outline) */
+.ui.header {
+    color: #d1d5db !important;           /* Light Gray Text */
+    font-weight: 700;
+}
+
+/* Inner Containers - Light Gray */
+.ui.segment,
+.ui.card,
+.ui.modal,
+.ui.grid > .column > .ui.segment {
+    background-color: #f0f0f0;
+    color: #222;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+}
+
+/* Collection Cards */
+.ui.card {
+    background-color: #f8f8f8;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.ui.card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+}
+
+/* Buttons */
+.ui.primary.button {
+    background-color: #FF8533;
+}
+
+.ui.red.button {
+    background-color: #e63939;
 }

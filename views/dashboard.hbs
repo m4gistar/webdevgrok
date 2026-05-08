@@ -1,7 +1,14 @@
 {{> menu}}
 
 <div class="ui container" style="margin-top: 30px;">
-  <h1 class="ui header">Dashboard</h1>
+
+  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+    <h1 class="ui header">Dashboard</h1>
+    <button class="ui primary button" onclick="showAddCollectionForm()">
+      + Add New Collection
+    </button>
+  </div>
+
   <p>Browse all available collections</p>
 
   <div class="ui grid">
@@ -25,9 +32,55 @@
     {{/each}}
   </div>
 
-  {{#if collections.length}}
-    <!-- collections exist -->
+  {{#if collections}}
+    <!-- Collections exist -->
   {{else}}
     <p>No collections found yet.</p>
   {{/if}}
+
 </div>
+
+<!-- Add New Collection Modal -->
+<div id="addCollectionModal" class="ui modal">
+  <div class="header">Create New Collection</div>
+  <div class="content">
+    <form id="addCollectionForm" action="/collection/add" method="POST" enctype="multipart/form-data" class="ui form">
+      <div class="field">
+        <label>Collection Name</label>
+        <input type="text" name="name" placeholder="e.g. My Dream Loadout" required>
+      </div>
+      <div class="field">
+        <label>Type</label>
+        <select name="type" required>
+          <option value="user">User Collection</option>
+          <option value="official">Official Collection</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Collection Image</label>
+        <input type="file" name="image" accept="image/*" required>
+        <small>Recommended: PNG, max 2MB</small>
+      </div>
+    </form>
+  </div>
+  <div class="actions">
+    <button class="ui button" onclick="hideAddCollectionModal()">Cancel</button>
+    <button class="ui primary button" onclick="submitAddCollectionForm()">Create Collection</button>
+  </div>
+</div>
+
+<script>
+function showAddCollectionForm() {
+  document.getElementById('addCollectionModal').classList.add('active');
+}
+
+function hideAddCollectionModal() {
+  document.getElementById('addCollectionModal').classList.remove('active');
+}
+
+function submitAddCollectionForm() {
+  document.getElementById('addCollectionForm').submit();
+}
+</script>
+
+{{> footer}}

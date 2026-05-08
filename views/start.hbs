@@ -1,18 +1,24 @@
 {{> menu}}
 
-<div class="ui container" style="margin-top: 40px;">
+<div class="ui container" style="margin-top: 50px; text-align: center;">
 
-  <div class="ui center aligned segment">
-    <h1 class="ui huge header">Welcome to SkinB4se</h1>
-    <p style="font-size: 1.4em; max-width: 700px; margin: 20px auto;">
-      Your personal Counter-Strike skin collection browser and loadout builder.
-    </p>
-    
-    <a href="/dashboard" class="ui huge primary button">
-      Browse Collections →
-    </a>
+  <h1 class="ui huge header">Welcome to SkinB4se</h1>
+
+  <!-- Image Slot -->
+  <div style="margin: 30px 0;">
+    <img src="/uploads/info/m4soldier.png" 
+         alt="CS2 Soldier" 
+         style="max-width: 100%; max-height: 420px; border-radius: 12px; box-shadow: 0 8px 20px rgba(0,0,0,0.3);">
   </div>
+
+  <p style="font-size: 1.5em; max-width: 700px; margin: 20px auto; line-height: 1.6;">
+    Your personal Counter-Strike skin collection browser and loadout builder.
+  </p>
+
+  <a href="/dashboard" class="ui huge primary button">
+    Browse Collections →
+  </a>
 
 </div>
 
-{{> footer}}   <!-- if you have a footer partial -->
+{{> footer}}
