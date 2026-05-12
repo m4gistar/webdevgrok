@@ -1,35 +1,35 @@
-{{> menu}}
+{{> menu}} 
 
-<div class="ui container" style="max-width: 450px; margin-top: 80px;">
+<div class="ui container" style="margin-top: 60px;"> {{!-- Main container with extra top margin for clean centering --}}
 
-  <div class="ui segment">
-    <h2 class="ui header" style="text-align: center;">Login to SkinB4se</h2>
+  <div class="ui segment" style="max-width: 400px; margin: 0 auto;"> {{!-- Centered boxed form area --}}
 
-    {{#if error}}
-      <div class="ui negative message">
-        <p>{{error}}</p>
+    <h2 class="ui header" style="text-align: center;">Login</h2> {{!-- Page title centered --}}
+
+    {{#if error}} {{!-- If an error message was passed from routes.js --}}
+      <div class="ui red message"> {{!-- Red error box --}}
+        {{error}} {{!-- Display the error text "Invalid username or password") --}}
       </div>
     {{/if}}
 
-    <form action="/authenticate" method="POST" class="ui form">
-      <div class="field">
+    <form action="/authenticate" method="POST" class="ui form"> {{!-- Form that submits to the authenticate route in routes.js --}}
+      <div class="field"> {{!-- Form field for username or email --}}
         <label>Username or Email</label>
-        <input type="text" name="identifier" placeholder="m4gistar or 20118397@setu.ie" required autofocus>
+        <input type="text" name="identifier" placeholder="Enter username or email" required> {{!-- Text input for username or email --}}
       </div>
-
-      <div class="field">
+      <div class="field"> {{!-- Form field for password --}}
         <label>Password</label>
-        <input type="password" name="password" placeholder="Enter password" required>
+        <input type="password" name="password" placeholder="Enter password" required> {{!-- Password input --}}
       </div>
-
-      <button type="submit" class="ui fluid primary button">Login</button>
+      <button type="submit" class="ui primary fluid button">Login</button> {{!-- Full-width primary button that submits the form --}}
     </form>
 
-    <div style="text-align: center; margin-top: 20px;">
-      <p>Don't have an account? <a href="/signup">Sign Up</a></p>
+    <div style="text-align: center; margin-top: 20px;"> {{!-- Link section below the form --}}
+      <p>Don't have an account? <a href="/signup">Create one here</a></p> {{!-- Link to the signup page --}}
     </div>
+
   </div>
 
 </div>
 
-{{> footer}}
+{{> footer}} 

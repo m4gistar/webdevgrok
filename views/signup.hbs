@@ -1,40 +1,45 @@
-{{> menu}}
+{{> menu}} 
 
-<div class="ui container" style="max-width: 450px; margin-top: 80px;">
+<div class="ui container" style="margin-top: 60px;"> {{!-- Main container with extra top margin for clean centering --}}
 
-  <div class="ui segment">
-    <h2 class="ui header" style="text-align: center;">Create New Account</h2>
+  <div class="ui segment" style="max-width: 400px; margin: 0 auto;"> {{!-- Centered boxed form area --}}
 
-    {{#if error}}
-      <div class="ui negative message">
-        <p>{{error}}</p>
+    <h2 class="ui header" style="text-align: center;">Create Account</h2> {{!-- Page title centered --}}
+
+    {{#if error}} {{!-- If an error message was passed from the server --}}
+      <div class="ui red message"> {{!-- Red error box --}}
+        {{error}} {{!-- Display the error text (e.g. "Username or email already taken") --}}
       </div>
     {{/if}}
 
-    <form action="/register" method="POST" class="ui form">
-      <div class="field">
+    <form action="/register" method="POST" class="ui form"> {{!-- Form that submits to the register route in routes.js --}}
+
+      <div class="field"> {{!-- Form field for username --}}
         <label>Username</label>
-        <input type="text" name="username" placeholder="Choose a username" required>
+
+        <input type="text" name="username" placeholder="Choose a username" required> {{!-- Text input for username --}}
       </div>
 
-      <div class="field">
+      <div class="field"> {{!-- Form field for email --}}
+
         <label>Email</label>
-        <input type="email" name="email" placeholder="your.email@example.com" required>
+        <input type="email" name="email" placeholder="your@email.com" required> {{!-- Email input --}}
       </div>
 
-      <div class="field">
+      <div class="field"> {{!-- Form field for password --}}
         <label>Password</label>
-        <input type="password" name="password" placeholder="Create a password" required>
+        <input type="password" name="password" placeholder="Choose a password" required> {{!-- Password input --}}
       </div>
-
-      <button type="submit" class="ui fluid primary button">Sign Up</button>
+      
+      <button type="submit" class="ui primary fluid button">Create Account</button> {{!-- Fullwidth primary button that submits the form --}}
     </form>
 
-    <div style="text-align: center; margin-top: 20px;">
-      <p>Already have an account? <a href="/login">Login</a></p>
+    <div style="text-align: center; margin-top: 20px;"> {{!-- Link section below the form --}}
+      <p>Already have an account? <a href="/login">Login here</a></p> {{!-- Link to the login page --}}
     </div>
+
   </div>
 
 </div>
 
-{{> footer}}
+{{> footer}} 

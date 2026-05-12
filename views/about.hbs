@@ -1,51 +1,60 @@
-{{> menu}}
+{{> menu}} {{!-- Include the shared navbar/menu partial at the top of the page --}}
 
-<div class="ui container" style="margin-top: 40px;">
+<div class="ui container" style="margin-top: 40px;"> {{!-- Main container for the About page with top margin --}}
 
-  <h1 class="ui header">About SkinB4se</h1>
+  <h1 class="ui header" style="text-align: center;">About SkinB4se</h1> {{!-- Large centered page title --}}
 
-  <div class="ui grid">
-    <!-- Left: Info Text -->
-    <div class="ten wide column">
-      <div class="ui segment">
-        <p style="font-size: 1.1em; line-height: 1.7;">
-          This webapp is inspired by 
-          <a href="https://stash.clash.gg" target="_blank">CS2 Stash</a> 
-          and 
-          <a href="https://csfloat.com/trade-up" target="_blank">CSFloat Trade-up</a>.
-        </p>
-        <p>
-          It is made by <strong>Filip Radocaj</strong><br>
-          GitHub: <a href="https://github.com/m4gistar" target="_blank">@m4gistar</a>
-        </p>
+  <div class="ui segment"> {{!-- Boxed section for project statistics --}}
+    <h2 class="ui header">Project Statistics</h2> {{!-- Section title for statistics --}}
+
+    <div class="ui three statistics"> {{!-- 3-column statistics component --}}
+      <div class="statistic"> {{!-- First statistic block --}}
+        <div class="value">{{totalOfficial}}</div> {{!-- Number of official collections passed from routes.js --}}
+        <div class="label">Official Collections</div> {{!-- Label for the number --}}
+      </div>
+      <div class="statistic"> {{!-- Second statistic block --}}
+        <div class="value">{{totalPrivate}}</div> {{!-- Number of private collections passed from routes.js --}}
+        <div class="label">Private Collections</div> {{!-- Label for the number --}}
+      </div>
+      <div class="statistic"> {{!-- Third statistic block --}}
+        <div class="value">{{totalUsers}}</div> {{!-- Number of registered users passed from routes.js --}}
+        <div class="label">Registered Users</div> {{!-- Label for the number --}}
       </div>
     </div>
 
-    <!-- Right: Map Image -->
-    <div class="six wide column">
-      <img src="/uploads/info/setumap.png" alt="Location Map" style="width: 100%; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
-    </div>
+    <p style="margin-top: 20px; font-size: 1.1em;"> {{!-- Paragraph showing total skins --}}
+      Total skins registered in the system: <strong>{{totalSkins}}</strong> {{!-- Bold the total number of skins --}}
+    </p>
   </div>
 
-  <!-- Email Request Section -->
-  <div class="ui segment" style="margin-top: 40px;">
-    <h3 id="request-title" class="ui header" style="color: black !important;">
-      New CS2 Update? Request it here to be officially added!
-    </h3>
-    
-    <form action="https://formspree.io/f/your-form-id" method="POST" class="ui form">
-      <div class="field">
-        <label>Your Email</label>
-        <input type="email" name="email" placeholder="your.email@example.com" required>
+  <div class="ui segment"> {{!-- Second boxed section for project details --}}
+    <h3>Project Info</h3> {{!-- Subsection title --}}
+    <p>SkinB4se is a full-stack web app built with Node.js, Express, Handlebars. I gave up on Render when it came to file uploads and ideas I wanted to implement...</p> {{!-- Project description --}}
+    <p>Author: m4gistar</p> {{!-- Author name --}}
+
+    <!-- Map image section -->
+    <h4 style="margin-top: 30px;">CS2 Map Overview</h4> {{!-- heading for map image --}}
+    <img src="/uploads/info/map.png" alt="CS2 Map" style="max-width: 100%; border-radius: 8px;"> {{!-- map image --}}
+
+    <!-- Contact form section -->
+    <h4 style="margin-top: 40px;">Get In Touch</h4> {{!-- Contact form heading --}}
+    <form class="ui form"> {{!-- Simple contact form --}}
+      <div class="field"> {{!-- Field for name --}}
+        <label>Name</label>
+        <input type="text" placeholder="Your name"> {{!-- Name input --}}
       </div>
-      <div class="field">
-        <label>Request / Suggestion</label>
-        <textarea name="message" rows="6" placeholder="e.g. Please add the new Anubis Collection..." required></textarea>
+      <div class="field"> {{!-- Field for email --}}
+        <label>Email</label>
+        <input type="email" placeholder="your@email.com"> {{!-- Email input --}}
       </div>
-      <button type="submit" class="ui primary button">Send Request</button>
+      <div class="field"> {{!-- Field for message --}}
+        <label>Message</label>
+        <textarea placeholder="Your message..."></textarea> {{!-- Message textarea --}}
+      </div>
+      <button class="ui primary button" type="submit">Send Message</button> {{!-- Submit button --}}
     </form>
   </div>
 
 </div>
 
-{{> footer}}
+{{> footer}} 

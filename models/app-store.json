@@ -111,121 +111,11 @@
       ]
     },
     {
-      "id": 2,
-      "name": "Recoil Collection",
-      "type": "official",
-      "image": "/uploads/collections/recoil_collection.png",
-      "items": [
-        {
-          "id": 201,
-          "gun": "USP-S",
-          "skinname": "Printstream",
-          "rarity": "Covert"
-        },
-        {
-          "id": 202,
-          "gun": "AWP",
-          "skinname": "Chromatic Aberration",
-          "rarity": "Covert"
-        },
-        {
-          "id": 203,
-          "gun": "AK-47",
-          "skinname": "Ice Coaled",
-          "rarity": "Classified"
-        },
-        {
-          "id": 204,
-          "gun": "Sawed-Off",
-          "skinname": "Kiss♥Love",
-          "rarity": "Classified"
-        },
-        {
-          "id": 205,
-          "gun": "P250",
-          "skinname": "Visions",
-          "rarity": "Restricted"
-        },
-        {
-          "id": 206,
-          "gun": "Glock-18",
-          "skinname": "Snack Attack",
-          "rarity": "Restricted"
-        },
-        {
-          "id": 208,
-          "gun": "MP7",
-          "skinname": "Tall Grass",
-          "rarity": "Mil-Spec"
-        },
-        {
-          "id": 209,
-          "gun": "R8 Revolver",
-          "skinname": "Crazy 8",
-          "rarity": "Mil-Spec"
-        },
-        {
-          "id": 210,
-          "gun": "XM1014",
-          "skinname": "Blue Tire",
-          "rarity": "Mil-Spec"
-        },
-        {
-          "id": 211,
-          "gun": "Negev",
-          "skinname": "Drop Me",
-          "rarity": "Mil-Spec"
-        },
-        {
-          "id": 212,
-          "gun": "P2000",
-          "skinname": "Gnarled",
-          "rarity": "Mil-Spec"
-        },
-        {
-          "id": 213,
-          "gun": "MAC-10",
-          "skinname": "Allure",
-          "rarity": "Mil-Spec"
-        },
-        {
-          "id": 214,
-          "gun": "FAMAS",
-          "skinname": "Meow 36",
-          "rarity": "Mil-Spec"
-        },
-        {
-          "id": 215,
-          "gun": "UMP-45",
-          "skinname": "Mud Craze",
-          "rarity": "Mil-Spec"
-        },
-        {
-          "id": 216,
-          "gun": "CZ75-Auto",
-          "skinname": "Circa 1990",
-          "rarity": "Mil-Spec"
-        },
-        {
-          "id": 217,
-          "gun": "SSG 08",
-          "skinname": "Dezastre",
-          "rarity": "Mil-Spec"
-        }
-      ]
-    },
-    {
       "id": 3,
       "name": "Broken Fang Collection",
       "type": "official",
       "image": "/uploads/collections/brokenfang_collection.png",
       "items": [
-        {
-          "id": 301,
-          "gun": "M4A1-S",
-          "skinname": "Printstream",
-          "rarity": "Covert"
-        },
         {
           "id": 302,
           "gun": "Glock-18",
@@ -707,6 +597,38 @@
           "gun": "M4A1-S",
           "skinname": "Fizzy POP",
           "rarity": "Mil-Spec"
+        }
+      ]
+    },
+    {
+      "id": 1778585729158,
+      "name": "Achroma Collection",
+      "type": "official",
+      "image": "/uploads/collections/achroma_collection_collection.png",
+      "items": [
+        {
+          "id": 1778585769171,
+          "gun": "P2000",
+          "skinname": "Grip Tape",
+          "rarity": "Mil-Spec"
+        },
+        {
+          "id": 1778587469593,
+          "gun": "AUG",
+          "skinname": "Creep",
+          "rarity": "Mil-Spec"
+        },
+        {
+          "id": 1778587502060,
+          "gun": "AWP",
+          "skinname": "The End",
+          "rarity": "Classified"
+        },
+        {
+          "id": 1778587721430,
+          "gun": "Glock-18",
+          "skinname": "Trace Lock",
+          "rarity": "Restricted"
         }
       ]
     }

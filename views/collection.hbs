@@ -1,40 +1,53 @@
-{{> menu}}
+{{> menu}} 
 
-<div class="ui container" style="margin-top: 30px;">
+<div class="ui container" style="margin-top: 30px;"> {{!-- Main container for the collection detail page with top margin --}}
 
-  <a href="/dashboard" class="ui button">← Back to Dashboard</a>
+  <a href="/dashboard" class="ui button">← Back to Dashboard</a> {{!-- Button that takes the user back to the main dashboard --}}
 
-  <div class="ui segment">
-    <h1 class="ui header">{{collection.name}}</h1>
-    <img src="{{collection.image}}" alt="{{collection.name}}" style="max-height: 300px; width: 100%; object-fit: cover; border-radius: 8px;">
-    <p><strong>Type:</strong> {{collection.type}}</p>
+  <div class="ui segment"> {{!-- Boxed area that holds the collection header information --}}
+    <h1 class="ui header">{{collection.name}}</h1> {{!-- Display the name of the current collection --}}
+    <img src="{{collection.image}}" alt="{{collection.name}}" style="max-height: 300px; width: 100%; object-fit: cover; border-radius: 8px;"> {{!-- Show the collection image --}}
+    <p><strong>Type:</strong> {{collection.type}}</p> {{!-- Show whether it is "official" or "user" (private) --}}
   </div>
 
-  <h2 class="ui header">Skins ({{collection.items.length}})</h2>
+  <h2 class="ui header">Skins ({{collection.items.length}})</h2> {{!-- Header that shows how many skins are in this collection --}}
 
-  {{#if isOwner}}
-    <button class="ui primary button" onclick="showAddSkinForm({{collection.id}})">
-      + Add New Skin
-    </button>
+  <!-- SMART SEARCH BAR - only shown to owners of private collections -->
+  {{#if isOwner}} {{!-- Only show this section if the current loggedin user is the owner of the collection --}}
+    {{#unless isOfficial}} {{!-- And only if this is NOT an official collection --}}
+
+      <div class="ui segment"> {{!-- Boxed area for the smart search bar --}}
+        <div class="ui icon input fluid"> {{!-- Full-width input with search icon --}}
+          <input type="text" id="skinSearch" placeholder="Search official skins to add... (e.g. AK-47 | Redline)" onkeyup="filterOfficialSkins()"> {{!-- Text input that calls the search function on every keystroke --}}
+          <i class="search icon"></i> {{!-- Search icon displayed inside the input --}}
+        </div>
+        <div id="skinSearchResults" class="ui divided list" style="max-height: 300px; overflow-y: auto; margin-top: 10px;"></div> {{!-- Container where JavaScript will dynamically insert matching official skins --}}
+      </div>
+    {{/unless}}
   {{/if}}
 
-  <div class="ui grid" style="margin-top: 20px;">
-    {{#each collection.items}}
-      <div class="four wide column">
-        <div class="ui card">
-          <div class="content">
-            <div class="header" style="color: black;">
-              {{gun}} | {{skinname}}
-            </div>
+  <!-- Old manual Add Skin button - only shown for official collections that the user is allowed to edit -->
+  {{#if isOfficial}} {{!-- Check if this is an official collection --}}
+    {{#if canAddOrDeleteSkins}} {{!-- And only show the button if the user is allowed to add skins (admin for official) --}}
+      <button class="ui primary button" onclick="showAddSkinForm({{collection.id}})"> {{!-- Button that opens the manual add skin modal --}}
+        + Add New Skin {{!-- Button text --}}
+      </button>
+    {{/if}}
+  {{/if}}
+
+  <div class="ui grid" style="margin-top: 20px;"> {{!-- Grid layout for displaying all skins in the collection --}}
+    {{#each collection.items}} {{!-- Loop through every skin that belongs to this collection --}}
+      <div class="four wide column"> {{!-- Each skin card takes up 4 columns on large screens --}}
+        <div class="ui card"> {{!-- UI card for each skin --}}
+          <div class="content"> {{!-- Card content area --}}
+            <div class="header">{{gun}} | {{skinname}}</div> {{!-- Display gun name and skin name --}}
             <div class="meta">
-              <span class="ui tiny label" style="background-color: {{getRarityColor rarity}}; color: white;">
-                {{rarity}}
-              </span>
+              <span class="ui tiny label" style="background-color: {{getRarityColor rarity}}; color: white;">{{rarity}}</span> {{!-- Rarity badge with correct background color --}}
             </div>
           </div>
-          <div class="extra content">
-            {{#if ../isOwner}}
-              <button class="ui tiny red button" onclick="deleteSkin({{../collection.id}}, {{id}})">Delete Skin</button>
+          <div class="extra content"> {{!-- Area at the bottom of the card for action buttons --}}
+            {{#if ../canAddOrDeleteSkins}} {{!-- Only show delete button if the user is allowed to delete skins --}}
+              <button class="ui tiny red button" onclick="deleteSkin({{../collection.id}}, {{id}})">Delete Skin</button> {{!-- Button that deletes this specific skin --}}
             {{/if}}
           </div>
         </div>
@@ -42,80 +55,157 @@
     {{/each}}
   </div>
 
-  {{#if isOwner}}
-    <button class="ui red button" onclick="deleteCollection({{collection.id}})" style="margin-top: 30px;">
-      🗑 Delete Entire Collection
+  <!-- Delete Entire Collection button -->
+  {{#if canDeleteCollection}} {{!-- Only show if the user is allowed to delete the whole collection (owner or admin) --}}
+    <button class="ui red button" onclick="deleteCollection({{collection.id}})" style="margin-top: 30px;"> {{!-- Red delete button --}}
+      Delete Entire Collection {{!-- Button text --}}
     </button>
   {{/if}}
 
 </div>
+ 
 
-<!-- Add Skin Modal -->
-{{#if isOwner}}
-<div class="ui modal" id="addSkinModal">
-  <div class="header">Add New Skin</div>
-  <div class="content">
-    <form id="addSkinForm" action="/collection/{{collection.id}}/add-skin" method="POST" class="ui form">
-      <div class="field">
-        <label>Gun</label>
-        <select name="gun" required>
-          <option value="">Select Gun...</option>
-          <optgroup label="Pistols">{{#each guns.pistols}}<option value="{{this}}">{{this}}</option>{{/each}}</optgroup>
-          <optgroup label="Rifles">{{#each guns.rifles}}<option value="{{this}}">{{this}}</option>{{/each}}</optgroup>
-          <optgroup label="Snipers">{{#each guns.snipers}}<option value="{{this}}">{{this}}</option>{{/each}}</optgroup>
-          <optgroup label="SMGs">{{#each guns.smgs}}<option value="{{this}}">{{this}}</option>{{/each}}</optgroup>
-          <optgroup label="Heavy">{{#each guns.heavy}}<option value="{{this}}">{{this}}</option>{{/each}}</optgroup>
-        </select>
+<!-- Old manual Add Skin Modal - only used by official collections -->
+{{#if isOfficial}} {{!-- Only render this modal if this is an official collection --}}
+  {{#if canAddOrDeleteSkins}} {{!-- Only render if the user is allowed to add skins --}}
+    <div class="ui modal" id="addSkinModal"> {{!-- Hidden modal that appears when adding a skin manually --}}
+      <div class="header">Add New Skin</div> {{!-- modal title --}}
+      <div class="content"> {{!-- Modal body --}}
+        <form id="addSkinForm" action="/collection/{{collection.id}}/add-skin" method="POST" class="ui form"> {{!-- Form that submits to the manual add-skin route --}}
+          <div class="field"> {{!-- Form field for selecting gun type --}}
+            <label>Gun</label>
+            <select name="gun" required> {{!-- Dropdown of all gun types --}}
+              <option value="">Select Gun...</option>
+              <optgroup label="Pistols">{{#each guns.pistols}}<option value="{{this}}">{{this}}</option>{{/each}}</optgroup>
+              <optgroup label="Rifles">{{#each guns.rifles}}<option value="{{this}}">{{this}}</option>{{/each}}</optgroup>
+              <optgroup label="Snipers">{{#each guns.snipers}}<option value="{{this}}">{{this}}</option>{{/each}}</optgroup>
+              <optgroup label="SMGs">{{#each guns.smgs}}<option value="{{this}}">{{this}}</option>{{/each}}</optgroup>
+              <optgroup label="Heavy">{{#each guns.heavy}}<option value="{{this}}">{{this}}</option>{{/each}}</optgroup>
+            </select>
+          </div>
+          <div class="field"> {{!-- Form field for skin name --}}
+            <label>Skin Name</label>
+            <input type="text" name="skinname" placeholder="Skin name" required> {{!-- Text input for custom skin name --}}
+          </div>
+          <div class="field"> {{!-- Form field for rarity --}}
+            <label>Rarity</label>
+            <select name="rarity" required> {{!-- Dropdown of all possible rarities --}}
+              <option value="Consumer">Consumer</option>
+              <option value="Industrial">Industrial</option>
+              <option value="Mil-Spec">Mil-Spec</option>
+              <option value="Restricted">Restricted</option>
+              <option value="Classified">Classified</option>
+              <option value="Covert">Covert</option>
+            </select>
+          </div>
+        </form>
       </div>
-      <div class="field">
-        <label>Skin Name</label>
-        <input type="text" name="skinname" placeholder="Skin name" required>
+      <div class="actions"> {{!-- Modal footer with action buttons --}}
+        <button class="ui button" onclick="hideAddSkinModal()">Cancel</button> {{!-- Button that closes the modal --}}
+        <button class="ui primary button" onclick="submitAddSkinForm()">Add Skin</button> {{!-- Button that submits the form --}}
       </div>
-      <div class="field">
-        <label>Rarity</label>
-        <select name="rarity" required>
-          <option value="Consumer">Consumer</option>
-          <option value="Industrial">Industrial</option>
-          <option value="Mil-Spec">Mil-Spec</option>
-          <option value="Restricted">Restricted</option>
-          <option value="Classified">Classified</option>
-          <option value="Covert">Covert</option>
-        </select>
-      </div>
-    </form>
-  </div>
-  <div class="actions">
-    <button class="ui button" onclick="hideAddSkinModal()">Cancel</button>
-    <button class="ui primary button" onclick="submitAddSkinForm()">Add Skin</button>
-  </div>
-</div>
+    </div>
+  {{/if}}
 {{/if}}
 
-<script>
-function showAddSkinForm(collectionId) {
-  document.getElementById('addSkinForm').action = `/collection/${collectionId}/add-skin`;
-  document.getElementById('addSkinModal').classList.add('active');
-}
+<script> {{!-- All JavaScript specific to the collection detail page --}}
+  const officialSkinsData = {{{JSONstringify officialSkins}}}; {{!-- Convert the list of official skins (passed only to private owners) into a JavaScript array --}}
 
-function hideAddSkinModal() {
-  document.getElementById('addSkinModal').classList.remove('active');
-}
+  // Smart search function for private collection owners
+  window.filterOfficialSkins = function() { {{!-- Global function called on every keystroke in the smart search bar --}}
+    const searchTerm = document.getElementById('skinSearch').value.toLowerCase().trim(); {{!-- Get what the user typed --}}
+    const resultsContainer = document.getElementById('skinSearchResults'); {{!-- Container where matching skins will be shown --}}
 
-function submitAddSkinForm() {
-  document.getElementById('addSkinForm').submit();
-}
+    if (!searchTerm) { {{!-- If the search box is empty --}}
+      resultsContainer.innerHTML = ''; {{!-- Clear any previous results --}}
+      return; {{!-- Exit early --}}
+    }
 
-function deleteSkin(collectionId, skinId) {
-  if (confirm("Delete this skin?")) {
-    window.location.href = `/collection/${collectionId}/delete-skin/${skinId}`;
+    let filtered = officialSkinsData.filter(skin => 
+      skin.display.toLowerCase().includes(searchTerm)
+    ); {{!-- Filter the official skins to only those that match the typed text --}}
+
+    resultsContainer.innerHTML = ''; {{!-- Clear previous results --}}
+    if (filtered.length === 0) { {{!-- If nothing matched --}}
+      resultsContainer.innerHTML = `<div class="ui message">No official skins found.</div>`; {{!-- Show a message --}}
+      return;
+    }
+
+    filtered.forEach(skin => { {{!-- Loop through every matching official skin --}}
+      const item = document.createElement('div'); {{!-- Create a new clickable list item --}}
+      item.className = 'item';
+      item.style.cursor = 'pointer';
+      item.style.padding = '8px';
+      item.innerHTML = ` {{!-- Build the HTML for this skin result --}}
+        <div class="content">
+          <div class="header">${skin.display}</div>
+          <div class="meta">
+            <span class="ui tiny label" style="background-color: ${getRarityColor(skin.rarity)}; color: white;">${skin.rarity}</span>
+          </div>
+        </div>`;
+      item.onclick = () => addOfficialSkin(skin.id); {{!-- When clicked, call the function to add this skin --}}
+      resultsContainer.appendChild(item); {{!-- Add the result to the list --}}
+    });
+  };
+
+  function getRarityColor(rarity) { {{!-- Helper that returns the correct CSS color for any rarity --}}
+    switch(rarity) {
+      case "Consumer": return "#d1d5db";
+      case "Industrial": return "#94a3b8";
+      case "Mil-Spec": return "#3b82f6";
+      case "Restricted": return "#a855f7";
+      case "Classified": return "#ec4899";
+      case "Covert": return "#ef4444";
+      default: return "#888888";
+    }
   }
-}
 
-function deleteCollection(collectionId) {
-  if (confirm("Delete the entire collection?")) {
-    window.location.href = `/collection/${collectionId}/delete`;
+  function addOfficialSkin(officialSkinId) { {{!-- Called when a user clicks a skin in the smart search results --}}
+    if (confirm("Add this official skin to your private collection?")) { {{!-- Show confirmation popup --}}
+      const form = document.createElement('form'); {{!-- Create a hidden form to submit the request --}}
+      form.method = 'POST';
+      form.action = `/collection/{{collection.id}}/add-official-skin`; {{!-- Send to the correct route with the current collection ID --}}
+      const input = document.createElement('input'); {{!-- Hidden input that carries the skin ID --}}
+      input.type = 'hidden';
+      input.name = 'officialSkinId';
+      input.value = officialSkinId;
+      form.appendChild(input);
+      document.body.appendChild(form); {{!-- Add the form to the page --}}
+      form.submit(); {{!-- Submit the form to the server --}}
+    }
   }
-}
+
+  // Old manual modal functions (still needed for official collections)
+  function showAddSkinForm(collectionId) { {{!-- Opens the manual addskin modal --}}
+    const form = document.getElementById('addSkinForm');
+    if (form) form.action = `/collection/${collectionId}/add-skin`; {{!-- Set the correct form action URL --}}
+    const modal = document.getElementById('addSkinModal');
+    if (modal) modal.classList.add('active'); {{!-- Show the modal --}}
+  }
+
+  function hideAddSkinModal() { {{!-- Closes the manual addskin modal --}}
+    const modal = document.getElementById('addSkinModal');
+    if (modal) modal.classList.remove('active'); {{!-- Hide the modal --}}
+  }
+
+  function submitAddSkinForm() { {{!-- Submits the manual addskin form --}}
+    const form = document.getElementById('addSkinForm');
+    if (form) form.submit(); {{!-- Trigger form submission --}}
+
+  }
+
+  function deleteSkin(collectionId, skinId) { {{!-- Called when user clicks Delete Skin on a card --}}
+    if (confirm("Delete this skin permanently?")) { {{!-- Show confirmation dialog --}}
+      window.location.href = `/collection/${collectionId}/delete-skin/${skinId}`; {{!-- Navigate to the delete route --}}
+    }
+  }
+
+
+  function deleteCollection(collectionId) { {{!-- Called when user clicks Delete Entire Collection --}}
+    if (confirm("Delete the entire collection? This cannot be undone.")) { {{!-- Show confirmation dialog --}}
+      window.location.href = `/collection/${collectionId}/delete`; {{!-- Navigate to the delete-collection route --}}
+    }
+  }
 </script>
 
-{{> footer}}
+{{> footer}} 

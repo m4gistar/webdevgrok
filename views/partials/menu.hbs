@@ -1,26 +1,41 @@
-<nav class="ui stackable menu">
-  
-  <!-- SkinB4se Logo -->
-  <header class="ui header item">
-    <a href="/">SkinB4se</a>
-  </header>
+<nav class="ui menu"> {{!-- Main top navigation bar using Semantic UI's menu component --}}
 
-  <div class="right menu">
-    <a href="/dashboard" class="item">Dashboard</a>
-    <a href="/calculator" class="item">Calculator</a>
-    <a href="/about" class="item">About</a>
+  <div class="ui container"> {{!-- Container keeps the navbar centered and responsive --}}
 
-    {{#if session.user}}
-      <!-- Logged In User -->
-      <a href="/logout" class="item">Logout</a>
-      
-      <a href="/account" class="item" style="padding: 8px 12px;">
-        <img src="{{session.user.profileImage}}" 
-             style="width: 32px; height: 32px; border-radius: 50%; object-fit: cover; border: 2px solid white;">
-      </a>
-    {{else}}
-      <!-- Guest -->
-      <a href="/login" class="item">Login</a>
-    {{/if}}
+    <!-- Left side: Logo / Brand name -->
+    <a href="/" class="header item"> {{!-- Clickable logo that always goes back to homepage --}}
+      SkinB4se {{!-- App name displayed as the brand --}}
+    </a>
+
+    <!-- Main navigation links (visible to everyone) -->
+    <a href="/dashboard" class="item">Dashboard</a> {{!-- Link to the main dashboard page --}}
+    <a href="/calculator" class="item">Trade-Up Calculator</a> {{!-- Link to the trade-up calculator --}}
+    <a href="/about" class="item">About</a> {{!-- Link to the about page with statistics --}}
+
+    <!-- Right side: User account controls (dynamic based on login status) -->
+    <div class="right menu"> {{!-- Pushes this section to the far right of the navbar --}}
+
+      {{#if session.user}} {{!-- If the user is logged in (session.user exists) --}}
+
+        <!-- Logged-in user: show profile picture and username -->
+        <a href="/account" class="item"> {{!-- Link to the account settings page --}}
+          <img src="{{session.user.profileImage}}" alt="Profile" style="width: 28px; height: 28px; border-radius: 50%; margin-right: 8px;"> {{!-- Small circular profile picture --}}
+          {{session.user.username}} {{!-- Display the logged-in username --}}
+        </a>
+
+        <!-- Logout button -->
+        <a href="/logout" class="item">Logout</a> {{!-- Link that calls the logout route --}}
+
+      {{else}} {{!-- If no user is logged in (session.user does not exist) --}}
+
+        <!-- Not logged in: show login and signup links -->
+        <a href="/login" class="item">Login</a> {{!-- Link to the login page --}}
+        <a href="/signup" class="item">Sign Up</a> {{!-- Link to the signup page --}}
+
+      {{/if}}
+
+    </div>
+
   </div>
-</nav>
+
+</nav> {{!-- End of the navigation bar --}}

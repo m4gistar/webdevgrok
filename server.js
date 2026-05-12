@@ -19,13 +19,14 @@ app.use(fileUpload({ useTempFiles: true }));
 
 // Session middleware - REQUIRED for login state to persist
 app.use(session({
-  secret: 'skinb4se-secret-key',   // Change this in production
+  secret: 'skinb4se-secret-key',   
   resave: false,
   saveUninitialized: true,
   cookie: { secure: false }        // Set to true when using HTTPS
 }));
 
-// ====================== Handlebars ======================
+// HANDLEBARS
+//rarity colours
 const handlebars = create({
   extname: '.hbs',
   helpers: {
@@ -47,7 +48,7 @@ const handlebars = create({
 app.engine('.hbs', handlebars.engine);
 app.set('view engine', '.hbs');
 
-// ====================== Routes ======================
+// ROUTES
 app.use("/", routes);
 
 app.listen(port, () => {

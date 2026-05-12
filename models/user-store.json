@@ -6,7 +6,25 @@
       "email": "20118397@setu.ie",
       "password": "ATXTAF4mm",
       "admin": true,
-      "bio": "Admin of SkinB4se",
+      "bio": "Admin",
+      "profileImage": "/uploads/profiles/m4gistar.png"
+    },
+    {
+      "id": 1778587795959,
+      "username": "m4gija",
+      "email": "m4gija@gmail.com",
+      "password": "ATXTAF4mm",
+      "admin": false,
+      "bio": "",
+      "profileImage": "/uploads/info/defaultpfp.png"
+    },
+    {
+      "id": 1778590517298,
+      "username": "m4gija2",
+      "email": "m4gija2@gmail.com",
+      "password": "ATXTAF4mm",
+      "admin": false,
+      "bio": "",
       "profileImage": "/uploads/info/defaultpfp.png"
     }
   ]

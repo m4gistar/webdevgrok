@@ -1,34 +1,45 @@
 {{> menu}}
 
-<div class="ui container" style="margin-top: 40px;">
+<div class="ui container" style="margin-top: 40px;"> {{!-- Main container for the account page with top margin --}}
 
-  <h1 class="ui header">My Account</h1>
+  <h1 class="ui header" style="text-align: center;">My Account</h1> {{!-- Page title centered --}}
 
-  <div class="ui grid">
-    <!-- Profile Picture -->
-    <div class="four wide column" style="text-align: center;">
-      <img src="{{user.profileImage}}" 
-           style="width: 180px; height: 180px; border-radius: 50%; object-fit: cover; border: 4px solid #FF6600;">
-      
-      <form action="/account/upload-profile" method="POST" enctype="multipart/form-data" style="margin-top: 15px;">
-        <input type="file" name="profileImage" accept="image/*">
-        <button type="submit" class="ui tiny primary button">Upload New Picture</button>
-      </form>
+  <div class="ui segment"> {{!-- Boxed section that holds all account information and forms --}}
+    
+    <!-- Current user information display -->
+    <div class="ui grid"> {{!-- Grid layout to show profile picture and user details side by side --}}
+      <div class="four wide column"> {{!-- Left column for profile picture --}}
+        <img src="{{user.profileImage}}" alt="Profile Picture" style="width: 100%; border-radius: 50%;"> {{!-- Display the user current profile picture --}}
+      </div>
+      <div class="twelve wide column"> {{!-- Right column for user details --}}
+        <h3>{{user.username}}</h3> {{!-- Show the logged-in username --}}
+        <p><strong>Email:</strong> {{user.email}}</p> {{!-- Show the users email --}}
+        <p><strong>Bio:</strong> {{user.bio}}</p> {{!-- Show the users current bio (can be empty) --}}
+      </div>
     </div>
 
-    <!-- Bio -->
-    <div class="twelve wide column">
-      <h3>Bio</h3>
-      <form action="/account/update-bio" method="POST" class="ui form">
-        <textarea name="bio" rows="6" placeholder="Write something about yourself...">{{user.bio}}</textarea>
-        <button type="submit" class="ui primary button">Save Bio</button>
-      </form>
-    </div>
+    <!-- Bio update form -->
+    <h4 style="margin-top: 30px;">Update Bio</h4> {{!-- Subsection title --}}
+    <form action="/account/update-bio" method="POST" class="ui form"> {{!-- Form that submits to the updatebio route --}}
+      <div class="field"> {{!-- Form field for bio text --}}
+        <label>Bio</label>
+        <textarea name="bio" rows="3">{{user.bio}}</textarea> {{!-- Textarea pre-filled with current bio --}}
+      </div>
+      <button type="submit" class="ui primary button">Save Bio</button> {{!-- Submit button to update bio --}}
+    </form>
+
+    <!-- Profile picture upload form -->
+    <h4 style="margin-top: 30px;">Change Profile Picture</h4> {{!-- Subsection title --}}
+    <form action="/account/upload-profile" method="POST" enctype="multipart/form-data" class="ui form"> {{!-- Form that submits to the upload-profile route with file upload --}}
+      <div class="field"> {{!-- Form field for file selection --}}
+        <label>New Profile Picture</label>
+        <input type="file" name="profileImage" accept="image/*"> {{!-- File input that only accepts images --}}
+      </div>
+      <button type="submit" class="ui primary button">Upload Picture</button> {{!-- Submit button to upload new profile picture --}}
+    </form>
+
   </div>
-
-  <h3 class="ui header" style="margin-top: 50px;">My Collections</h3>
-  <p>(User collections will appear here in the next update)</p>
 
 </div>
 
-{{> footer}}
+{{> footer}} {{!-- Include the shared footer partial at the bottom of the page --}}

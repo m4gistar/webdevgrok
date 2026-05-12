@@ -1,31 +1,31 @@
-<html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    
-    <title>{{title}}</title>
-    
-    <!-- import the FomanticUI stylesheet -->
-   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fomantic-ui@2.9.4/dist/semantic.min.css">
-   
-    <!-- import the webpage's stylesheet -->
-    <link rel="stylesheet" href="/style.css">   
-  </head>
+<!DOCTYPE html>
+
+<html lang="en"> {{!-- Start of the HTML document with English language set --}}
+
+<head> {{!-- Head section contains metadata and all external resources needed by every page --}}
+
+  <meta charset="UTF-8"> {{!-- Declare character encoding as UTF-8 so special characters display correctly --}}
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"> {{!-- Make the site responsive on phones and tablets --}}
   
-  <body>
-    
-    <section class="ui container">
-      {{{body}}}
-    </section>
-    
-    <!-- import the jQuery file -->
-    <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script>
-    
-    <!-- import the SemanticUI javascript file -->
-    <script src="https://cdn.jsdelivr.net/npm/fomantic-ui@2.9.4/dist/semantic.min.js"></script>
-    
-    <!-- import the webpage's javascript file -->
-    <script src="/script.js"></script>
-    
-  </body>
+  <title>{{title}} - SkinB4se</title> {{!-- Dynamic browser tab title. Uses the 'title' variable passed from routes.js (or falls back to "SkinB4se") --}}
+
+  <!-- Semantic UI CSS -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/semantic-ui@2.4.2/dist/semantic.min.css">
+
+  <!-- Custom CSS for this app -->
+  <link rel="stylesheet" href="/style.css"> {{!-- Load css --}}
+
+</head>
+
+<body> 
+
+  {{{body}}} {{!-- This special Handlebars triple-brace tag is where the content of each individual view (dashboard.hbs collection.hbs start.hbs etc) is inserted by express-handlebars --}}
+
+  <!-- Semantic UI JavaScript dependencies -->
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> {{!-- Load jQuery first (Semantic UI requires it for dropdowns, modals, etc.) --}}
+  <script src="https://cdn.jsdelivr.net/npm/semantic-ui@2.4.2/dist/semantic.min.js"></script> {{!-- Load Semantic UI JavaScript for interactive components like modals, dropdowns, and buttons --}}
+
+  <!-- Any page-specific JavaScript is included inside the individual view files -->
+
+</body>
 </html>
