@@ -1,0 +1,40 @@
+{{> menu}}
+
+<div class="ui container" style="max-width: 450px; margin-top: 80px;">
+
+  <div class="ui segment">
+    <h2 class="ui header" style="text-align: center;">Create New Account</h2>
+
+    {{#if error}}
+      <div class="ui negative message">
+        <p>{{error}}</p>
+      </div>
+    {{/if}}
+
+    <form action="/register" method="POST" class="ui form">
+      <div class="field">
+        <label>Username</label>
+        <input type="text" name="username" placeholder="Choose a username" required>
+      </div>
+
+      <div class="field">
+        <label>Email</label>
+        <input type="email" name="email" placeholder="your.email@example.com" required>
+      </div>
+
+      <div class="field">
+        <label>Password</label>
+        <input type="password" name="password" placeholder="Create a password" required>
+      </div>
+
+      <button type="submit" class="ui fluid primary button">Sign Up</button>
+    </form>
+
+    <div style="text-align: center; margin-top: 20px;">
+      <p>Already have an account? <a href="/login">Login</a></p>
+    </div>
+  </div>
+
+</div>
+
+{{> footer}}

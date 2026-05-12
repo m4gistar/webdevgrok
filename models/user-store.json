@@ -1,0 +1,13 @@
+{
+  "users": [
+    {
+      "id": 1,
+      "username": "m4gistar",
+      "email": "20118397@setu.ie",
+      "password": "ATXTAF4mm",
+      "admin": true,
+      "bio": "Admin of SkinB4se",
+      "profileImage": "/uploads/info/defaultpfp.png"
+    }
+  ]
+}

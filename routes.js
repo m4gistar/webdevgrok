@@ -3,154 +3,135 @@
 import express from 'express';
 import logger from "./utils/logger.js";
 import appStore from './models/app-store.js';
+import accounts from './controllers/accounts.js';
+import userCollections from './models/user-collections.js';
 
 const router = express.Router();
 
-// ====================== MIDDLEWARE ======================
-router.use(express.urlencoded({ extended: true }));   // ← This is critical for forms
+// Middleware
+router.use(express.urlencoded({ extended: true }));
 
-// ====================== Helpers ======================
+// Pass session to views
 router.use((req, res, next) => {
-  res.locals.getTypeColor = (type) => type === 'official' ? 'orange' : 'blue';
-
-  res.locals.getRarityColor = (rarity) => {
-    switch(rarity) {
-      case "Consumer":    return "#d1d5db";
-      case "Industrial":  return "#94a3b8";
-      case "Mil-Spec":    return "#3b82f6";
-      case "Restricted":  return "#a855f7";
-      case "Classified":  return "#ec4899";
-      case "Covert":      return "#ef4444";
-      default:            return "#888888";
-    }
-  };
+  res.locals.session = req.session || {};
   next();
 });
 
-console.log("✅ Routes loaded successfully");
-
-// ====================== ROUTES ======================
-
-// Home
-router.get('/', (req, res) => {
-  const data = appStore.getData();
-  res.render('start', { collections: data.collections || [] });
+// Helpers
+router.use((req, res, next) => {
+  res.locals.getTypeColor = (type) => type === 'official' ? 'orange' : 'blue';
+  res.locals.getRarityColor = (rarity) => {
+    switch(rarity) {
+      case "Consumer": return "#d1d5db";
+      case "Industrial": return "#94a3b8";
+      case "Mil-Spec": return "#3b82f6";
+      case "Restricted": return "#a855f7";
+      case "Classified": return "#ec4899";
+      case "Covert": return "#ef4444";
+      default: return "#888888";
+    }
+  };
+  res.locals.JSONstringify = (context) => JSON.stringify(context);
+  next();
 });
 
+console.log("✅ Routes and helpers loaded successfully");
+
+// ====================== Routes ======================
+
+router.get('/', accounts.index);
+
+// Accounts
+router.get('/login', accounts.login);
+router.get('/signup', accounts.signup);
+router.get('/logout', accounts.logout);
+router.post('/register', accounts.register);
+router.post('/authenticate', accounts.authenticate);
+router.get('/account', accounts.account);
+router.post('/account/update-bio', accounts.updateBio);
+router.post('/account/upload-profile', accounts.uploadProfile);
+
 // Dashboard
-router.get('/dashboard', (req, res) => {
-  const data = appStore.getData();
-  res.render('dashboard', { collections: data.collections || [] });
+router.get('/dashboard', async (req, res) => {
+  const appData = appStore.getData();
+  const userData = await userCollections.getAll();
+  res.render('dashboard', { collections: [...appData.collections, ...userData] });
 });
 
 // Collection Details
-router.get('/collection/:id', (req, res) => {
-  const data = appStore.getData();
-  const collection = data.collections.find(c => c.id == req.params.id);
-  
-  if (!collection) return res.render('error', { message: 'Collection not found' });
+router.get('/collection/:id', async (req, res) => {
+  const appData = appStore.getData();
+  let collection = appData.collections.find(c => c.id == req.params.id);
 
-  const allGuns = [
-    ...data.guns.pistols || [],
-    ...data.guns.rifles || [],
-    ...data.guns.snipers || [],
-    ...data.guns.smgs || [],
-    ...data.guns.heavy || []
-  ].sort();
+  if (!collection) {
+    const userData = await userCollections.getAll();
+    collection = userData.find(c => c.id == req.params.id);
+  }
+
+  if (!collection) {
+    return res.render('error', { message: 'Collection not found' });
+  }
 
   res.render('collection', { 
     collection: collection,
-    guns: { all: allGuns }
+    guns: appData.guns,
+    isOwner: req.session?.user && (req.session.user.id == collection.ownerId || req.session.user.admin)
   });
 });
 
-// Add Skin
-router.post('/collection/:id/add-skin', async (req, res) => {
-  console.log("Received form data:", req.body);   // ← Helpful for debugging
-
-  const { gun, skinname, rarity } = req.body;
-  const collectionId = parseInt(req.params.id);
-
-  if (!gun || !skinname || !rarity) {
-    return res.send("Error: Missing fields");
-  }
-
-  const newSkin = {
-    id: Date.now(),
-    gun,
-    skinname,
-    rarity
-  };
-
-  await appStore.addItem('collections', collectionId, 'items', newSkin);
-  res.redirect(`/collection/${collectionId}`);
-});
-
-// Delete Skin
-router.get('/collection/:collectionId/delete-skin/:skinId', async (req, res) => {
-  const collectionId = parseInt(req.params.collectionId);
-  const skinId = parseInt(req.params.skinId);
-
-  await appStore.removeItem('collections', collectionId, 'items', skinId);
-  res.redirect(`/collection/${collectionId}`);
-});
-
-// ====================== Add New Collection with Image Upload ======================
+// User Collection CRUD
 router.post('/collection/add', async (req, res) => {
-  try {
-    const { name, type } = req.body;
-    const image = req.files ? req.files.image : null;
-
-    if (!name || !type) {
-      return res.send("Error: Name and Type are required");
-    }
-
-    let imagePath = "/uploads/collections/default_collection.png";
-
-    if (image) {
-      const uploadPath = `./public/uploads/collections/${name.toLowerCase().replace(/\s+/g, '_')}_collection.png`;
-      await image.mv(uploadPath);   // Move uploaded file
-      imagePath = `/uploads/collections/${name.toLowerCase().replace(/\s+/g, '_')}_collection.png`;
-    }
-
-    const newCollection = {
-      id: Date.now(),
-      name: name.trim(),
-      type: type,
-      image: imagePath,
-      items: []
-    };
-
-    await appStore.addCollection('collections', newCollection);
-    res.redirect('/dashboard');
-
-  } catch (err) {
-    console.error(err);
-    res.send("Error uploading image: " + err.message);
-  }
-});
-// Delete Entire Collection
-router.get('/collection/:id/delete', async (req, res) => {
-  const collectionId = parseInt(req.params.id);
-  
-  await appStore.removeCollection('collections', collectionId);
+  if (!req.session?.user) return res.redirect('/login');
+  const { name } = req.body;
+  const newCollection = {
+    id: Date.now(),
+    name: name.trim(),
+    type: "user",
+    ownerId: req.session.user.id,
+    image: req.session.user.profileImage || "/uploads/info/defaultpfp.png",
+    items: []
+  };
+  await userCollections.addCollection(newCollection);
   res.redirect('/dashboard');
 });
 
-// View 4 - Tradeup Calculator
-router.get('/calculator', async (req, res) => {
-  const data = appStore.getData();
-  res.render('calculator', { 
-    title: 'Tradeup Calculator',
-    collections: data.collections || []
-  });
+router.post('/collection/:id/add-skin', async (req, res) => {
+  if (!req.session?.user) return res.redirect('/login');
+  const collectionId = parseInt(req.params.id);
+  const { gun, skinname, rarity } = req.body;
+  const newSkin = { id: Date.now(), gun, skinname, rarity };
+  await userCollections.addSkin(collectionId, newSkin);
+  res.redirect(`/collection/${collectionId}`);
 });
 
-// About Page (View 5)
+router.get('/collection/:collectionId/delete-skin/:skinId', async (req, res) => {
+  if (!req.session?.user) return res.redirect('/login');
+  const collectionId = parseInt(req.params.collectionId);
+  const skinId = parseInt(req.params.skinId);
+  await userCollections.removeSkin(collectionId, skinId);
+  res.redirect(`/collection/${collectionId}`);
+});
+
+router.get('/collection/:id/delete', async (req, res) => {
+  if (!req.session?.user) return res.redirect('/login');
+  const collectionId = parseInt(req.params.id);
+  const collection = await userCollections.findById(collectionId);
+  if (!collection) return res.redirect('/dashboard');
+  const isOwnerOrAdmin = req.session.user.id == collection.ownerId || req.session.user.admin;
+  if (isOwnerOrAdmin) {
+    await userCollections.removeCollection(collectionId);
+  }
+  res.redirect('/dashboard');
+});
+
+// Calculator & About
+router.get('/calculator', (req, res) => {
+  const data = appStore.getData();
+  res.render('calculator', { collections: data.collections || [] });
+});
+
 router.get('/about', (req, res) => {
-  res.render('about', { 
-    title: 'About SkinB4se' 
-  });
+  res.render('about', { title: 'About SkinB4se' });
 });
 
 export default router;

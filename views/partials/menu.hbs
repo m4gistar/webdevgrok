@@ -5,17 +5,22 @@
     <a href="/">SkinB4se</a>
   </header>
 
-  <!-- Right side navigation -->
   <div class="right menu">
-    <a href="/dashboard" class="item">
-      <i class="grid layout icon"></i> Dashboard
-    </a>
-    <a href="/calculator" class="item">
-      <i class="calculator icon"></i> Calculator
-    </a>
-    <a href="/about" class="item">
-      <i class="info circle icon"></i> About
-    </a>
-  </div>
+    <a href="/dashboard" class="item">Dashboard</a>
+    <a href="/calculator" class="item">Calculator</a>
+    <a href="/about" class="item">About</a>
 
+    {{#if session.user}}
+      <!-- Logged In User -->
+      <a href="/logout" class="item">Logout</a>
+      
+      <a href="/account" class="item" style="padding: 8px 12px;">
+        <img src="{{session.user.profileImage}}" 
+             style="width: 32px; height: 32px; border-radius: 50%; object-fit: cover; border: 2px solid white;">
+      </a>
+    {{else}}
+      <!-- Guest -->
+      <a href="/login" class="item">Login</a>
+    {{/if}}
+  </div>
 </nav>

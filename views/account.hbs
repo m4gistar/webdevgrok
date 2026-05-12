@@ -1,0 +1,34 @@
+{{> menu}}
+
+<div class="ui container" style="margin-top: 40px;">
+
+  <h1 class="ui header">My Account</h1>
+
+  <div class="ui grid">
+    <!-- Profile Picture -->
+    <div class="four wide column" style="text-align: center;">
+      <img src="{{user.profileImage}}" 
+           style="width: 180px; height: 180px; border-radius: 50%; object-fit: cover; border: 4px solid #FF6600;">
+      
+      <form action="/account/upload-profile" method="POST" enctype="multipart/form-data" style="margin-top: 15px;">
+        <input type="file" name="profileImage" accept="image/*">
+        <button type="submit" class="ui tiny primary button">Upload New Picture</button>
+      </form>
+    </div>
+
+    <!-- Bio -->
+    <div class="twelve wide column">
+      <h3>Bio</h3>
+      <form action="/account/update-bio" method="POST" class="ui form">
+        <textarea name="bio" rows="6" placeholder="Write something about yourself...">{{user.bio}}</textarea>
+        <button type="submit" class="ui primary button">Save Bio</button>
+      </form>
+    </div>
+  </div>
+
+  <h3 class="ui header" style="margin-top: 50px;">My Collections</h3>
+  <p>(User collections will appear here in the next update)</p>
+
+</div>
+
+{{> footer}}

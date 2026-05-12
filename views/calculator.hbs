@@ -2,7 +2,7 @@
 
 <div class="ui container" style="margin-top: 30px;">
   <h1 class="ui header">Tradeup Calculator</h1>
-  <p>Select exactly 10 skins of the same rarity to simulate a trade-up</p>
+  <p>Select exactly 10 skins of the same rarity</p>
 
   <div class="ui grid">
     <!-- Left: Search -->
@@ -11,11 +11,10 @@
         <input type="text" id="skinSearch" placeholder="Search skins..." onkeyup="filterSkins()">
       </div>
       <div id="skinList" class="ui segment" style="max-height: 650px; overflow-y: auto; margin-top: 10px;">
-        <!-- Populated by JS -->
       </div>
     </div>
 
-    <!-- Right: Slots + Results -->
+    <!-- Right: 10 Slots -->
     <div class="eight wide column">
       <h3 class="ui header">Selected Skins ({{selectedSkins.length}}/10)</h3>
       <div id="slots" class="ui grid" style="min-height: 420px;"></div>
@@ -37,33 +36,53 @@ let currentRarityFilter = null;
 // Load all skins
 function loadAllSkins() {
   allSkins = [];
-  {{#each collections}}
-    {{#each items}}
-      allSkins.push({
-        id: {{id}},
-        gun: "{{gun}}",
-        skinname: "{{skinname}}",
-        rarity: "{{rarity}}",
-        collectionName: "{{../name}}"
-      });
-    {{/each}}
-  {{/each}}
-}
+  const collectionsData = {{{JSONstringify collections}}};
 
-function getNextRarity(rarity) {
-  const map = { "Consumer": "Industrial", "Industrial": "Mil-Spec", "Mil-Spec": "Restricted", "Restricted": "Classified", "Classified": "Covert" };
-  return map[rarity] || null;
+  collectionsData.forEach(collection => {
+    if (collection.items) {
+      collection.items.forEach(skin => {
+        allSkins.push({
+          id: skin.id,
+          gun: skin.gun,
+          skinname: skin.skinname,
+          rarity: skin.rarity,
+          collectionName: collection.name
+        });
+      });
+    }
+  });
+
+  console.log("✅ Loaded", allSkins.length, "skins");
 }
 
 function getRarityHex(rarity) {
-  const colors = { "Consumer":"#d1d5db", "Industrial":"#94a3b8", "Mil-Spec":"#3b82f6", "Restricted":"#a855f7", "Classified":"#ec4899", "Covert":"#ef4444" };
+  const colors = {
+    "Consumer": "#d1d5db", "Industrial": "#94a3b8", "Mil-Spec": "#3b82f6",
+    "Restricted": "#a855f7", "Classified": "#ec4899", "Covert": "#ef4444"
+  };
   return colors[rarity] || "#888888";
 }
 
-// Render left side
+function getNextRarity(rarity) {
+  const map = {
+    "Consumer": "Industrial",
+    "Industrial": "Mil-Spec",
+    "Mil-Spec": "Restricted",
+    "Restricted": "Classified",
+    "Classified": "Covert"
+  };
+  return map[rarity] || null;
+}
+
+// Render skins on left
 function renderSkinList(filtered) {
   const container = document.getElementById('skinList');
   container.innerHTML = '';
+
+  if (filtered.length === 0) {
+    container.innerHTML = '<p>No matching skins found.</p>';
+    return;
+  }
 
   filtered.forEach(skin => {
     const div = document.createElement('div');
@@ -81,7 +100,6 @@ function renderSkinList(filtered) {
   });
 }
 
-// Add to slots
 function addToTradeup(skin) {
   if (selectedSkins.length >= 10) return;
   if (selectedSkins.length > 0 && skin.rarity !== currentRarityFilter) {
@@ -120,10 +138,9 @@ function renderSlots() {
     if (selectedSkins[i]) {
       const s = selectedSkins[i];
       slot.innerHTML = `
-        <div style="text-align:center; width:100%;">
+        <div style="text-align:center;">
           <strong>${s.gun}</strong><br>
-          <small>${s.skinname}</small><br>
-          <span class="ui tiny label" style="background-color: ${getRarityHex(s.rarity)}; color:white;">${s.rarity}</span>
+          <small>${s.skinname}</small>
         </div>
       `;
       slot.onclick = () => removeFromSlot(i);
@@ -133,61 +150,58 @@ function renderSlots() {
     container.appendChild(slot);
   }
 
-  if (selectedSkins.length === 10) calculateTradeupOutcomes();
-  else document.getElementById('tradeupResults').style.display = 'none';
+  if (selectedSkins.length === 10) {
+    calculateTradeupOutcomes();
+  } else {
+    document.getElementById('tradeupResults').style.display = 'none';
+  }
 }
 
-// Correct Tradeup Logic
 function calculateTradeupOutcomes() {
-  const resultsDiv = document.getElementById('tradeupResults');
-  const listDiv = document.getElementById('outcomesList');
+  const resultsContainer = document.getElementById('tradeupResults');
   const header = document.getElementById('rarityHeader');
+  const list = document.getElementById('outcomesList');
 
-  const inputRarity = currentRarityFilter;
-  const nextRarity = getNextRarity(inputRarity);
+  resultsContainer.style.display = 'block';
+  header.textContent = `Possible ${getNextRarity(currentRarityFilter)} Outcomes`;
 
-  // Special message for Covert → Exceptionally Rare
-  if (inputRarity === "Covert") {
-    header.innerHTML = `<strong>Trades up to two different Exceptionally Rare Items</strong>`;
-    listDiv.innerHTML = `<div class="item">Exceptionally Rare items are extremely rare and valuable.</div>`;
-    resultsDiv.style.display = 'block';
-    return;
-  }
-
-  header.innerHTML = `Possible <strong>${nextRarity}</strong> Outcomes`;
-
-  // Count skins per collection
-  const collectionCount = {};
-  selectedSkins.forEach(s => {
-    collectionCount[s.collectionName] = (collectionCount[s.collectionName] || 0) + 1;
+  // Group selected skins by collection
+  const collectionCounts = {};
+  selectedSkins.forEach(skin => {
+    collectionCounts[skin.collectionName] = (collectionCounts[skin.collectionName] || 0) + 1;
   });
 
-  listDiv.innerHTML = '';
+  list.innerHTML = '';
 
-  Object.keys(collectionCount).forEach(collectionName => {
-    const inputCount = collectionCount[collectionName];
-    const A = inputCount / 10;
+  // For each collection that has skins selected
+  Object.keys(collectionCounts).forEach(collectionName => {
+    const count = collectionCounts[collectionName];
+    const weight = count / 10; // A
 
-    const possibleSkins = allSkins.filter(s => 
-      s.collectionName === collectionName && s.rarity === nextRarity
+    // Find all possible higher-rarity skins in this collection
+    const possibleOutcomes = allSkins.filter(s => 
+      s.collectionName === collectionName && 
+      s.rarity === getNextRarity(currentRarityFilter)
     );
 
-    const B = possibleSkins.length > 0 ? 100 / possibleSkins.length : 0;
+    if (possibleOutcomes.length > 0) {
+      const chancePerSkin = Math.round(100 / possibleOutcomes.length); // B
 
-    possibleSkins.forEach(skin => {
-      const chance = Math.round(A * B);
+      possibleOutcomes.forEach(outcome => {
+        const finalChance = Math.round(weight * chancePerSkin);
 
-      const item = document.createElement('div');
-      item.className = 'item';
-      item.innerHTML = `
-        <strong>${skin.gun} | ${skin.skinname}</strong>
-        <span style="float:right; color:#ef4444; font-weight:bold;">${chance}%</span>
-      `;
-      listDiv.appendChild(item);
-    });
+        const item = document.createElement('div');
+        item.className = 'item';
+        item.innerHTML = `
+          <div class="content">
+            <div class="header">${outcome.gun} | ${outcome.skinname}</div>
+            <div class="description">${finalChance}% chance</div>
+          </div>
+        `;
+        list.appendChild(item);
+      });
+    }
   });
-
-  resultsDiv.style.display = 'block';
 }
 
 function filterSkins() {
@@ -197,7 +211,8 @@ function filterSkins() {
   if (currentRarityFilter) filtered = filtered.filter(s => s.rarity === currentRarityFilter);
   if (searchTerm) {
     filtered = filtered.filter(s => 
-      s.gun.toLowerCase().includes(searchTerm) || s.skinname.toLowerCase().includes(searchTerm)
+      s.gun.toLowerCase().includes(searchTerm) || 
+      s.skinname.toLowerCase().includes(searchTerm)
     );
   }
 

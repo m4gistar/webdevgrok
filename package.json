@@ -5,7 +5,7 @@
   "type": "module",
   "main": "server.js",
   "scripts": {
-    "start": "nodemon --ignore \"models/app-store.json\" server.js"
+  "start": "nodemon --ignore \"models/*.json\" server.js"
   },
   "keywords": [
     "node",

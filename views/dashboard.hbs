@@ -4,62 +4,57 @@
 
   <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
     <h1 class="ui header">Dashboard</h1>
-    <button class="ui primary button" onclick="showAddCollectionForm()">
-      + Add New Collection
-    </button>
+    {{#if session.user}}
+      <button class="ui primary button" onclick="showAddCollectionForm()">
+        + Add New Collection
+      </button>
+    {{/if}}
   </div>
 
-  <p>Browse all available collections</p>
-
-  <div class="ui grid">
-    {{#each collections}}
-      <div class="four wide column">
-        <div class="ui card" style="width: 100%; cursor: pointer;" onclick="window.location='/collection/{{id}}'">
-          <div class="image">
-            <img src="{{image}}" alt="{{name}}" style="height: 180px; object-fit: cover;">
-          </div>
-          <div class="content">
-            <div class="header">{{name}}</div>
-            <div class="meta">
-              <span class="ui tiny label">{{type}}</span>
-            </div>
-            <div class="description">
-              {{items.length}} skins
-            </div>
-          </div>
+  <!-- Search & Filters -->
+  <div class="ui segment">
+    <div class="ui form">
+      <div class="fields">
+        <div class="eight wide field">
+          <input type="text" id="globalSearch" placeholder="Search guns or skin names..." onkeyup="filterResults()">
+        </div>
+        <div class="four wide field">
+          <select id="rarityFilter" onchange="filterResults()">
+            <option value="">All Rarities</option>
+            <option value="Consumer">Consumer</option>
+            <option value="Industrial">Industrial</option>
+            <option value="Mil-Spec">Mil-Spec</option>
+            <option value="Restricted">Restricted</option>
+            <option value="Classified">Classified</option>
+            <option value="Covert">Covert</option>
+          </select>
         </div>
       </div>
-    {{/each}}
+    </div>
   </div>
 
-  {{#if collections}}
-    <!-- Collections exist -->
-  {{else}}
-    <p>No collections found yet.</p>
-  {{/if}}
+  <!-- Search Results -->
+  <h3 class="ui header">Search Results</h3>
+  <div id="searchResults" class="ui grid" style="max-height: 420px; overflow-y: auto; padding: 10px; background: #f8f8f8; border-radius: 8px;"></div>
+
+  <!-- Official Collections -->
+  <h3 class="ui header" style="margin-top: 40px;">Browse Official Collections</h3>
+  <div id="officialCollections" class="ui grid" style="overflow-x: auto; white-space: nowrap; padding-bottom: 20px;"></div>
+
+  <!-- Private Collections -->
+  <h3 class="ui header" style="margin-top: 40px;">Browse Private Collections</h3>
+  <div id="privateCollections" class="ui grid" style="overflow-x: auto; white-space: nowrap; padding-bottom: 20px;"></div>
 
 </div>
 
-<!-- Add New Collection Modal -->
-<div id="addCollectionModal" class="ui modal">
+<!-- Add Collection Modal -->
+<div class="ui modal" id="addCollectionModal">
   <div class="header">Create New Collection</div>
   <div class="content">
-    <form id="addCollectionForm" action="/collection/add" method="POST" enctype="multipart/form-data" class="ui form">
+    <form id="addCollectionForm" action="/collection/add" method="POST" class="ui form">
       <div class="field">
         <label>Collection Name</label>
-        <input type="text" name="name" placeholder="e.g. My Dream Loadout" required>
-      </div>
-      <div class="field">
-        <label>Type</label>
-        <select name="type" required>
-          <option value="user">User Collection</option>
-          <option value="official">Official Collection</option>
-        </select>
-      </div>
-      <div class="field">
-        <label>Collection Image</label>
-        <input type="file" name="image" accept="image/*" required>
-        <small>Recommended: PNG, max 2MB</small>
+        <input type="text" name="name" placeholder="My Awesome Loadout" required>
       </div>
     </form>
   </div>
@@ -70,6 +65,118 @@
 </div>
 
 <script>
+// Global data
+let allSkins = [];
+let allCollections = [];
+
+// Load data
+function loadData() {
+  allCollections = {{{JSONstringify collections}}};
+
+  allSkins = [];
+  allCollections.forEach(collection => {
+    if (collection.items) {
+      collection.items.forEach(skin => {
+        allSkins.push({
+          ...skin,
+          collectionId: collection.id,
+          collectionName: collection.name,
+          collectionType: collection.type
+        });
+      });
+    }
+  });
+}
+
+function getRarityHex(rarity) {
+  const colors = {
+    "Consumer": "#d1d5db", "Industrial": "#94a3b8", "Mil-Spec": "#3b82f6",
+    "Restricted": "#a855f7", "Classified": "#ec4899", "Covert": "#ef4444"
+  };
+  return colors[rarity] || "#888888";
+}
+
+// Render search results
+function filterResults() {
+  const searchTerm = document.getElementById('globalSearch').value.toLowerCase().trim();
+  const rarityFilter = document.getElementById('rarityFilter').value;
+
+  let filtered = allSkins;
+
+  if (rarityFilter) filtered = filtered.filter(s => s.rarity === rarityFilter);
+  if (searchTerm) {
+    filtered = filtered.filter(s => 
+      s.gun.toLowerCase().includes(searchTerm) || 
+      s.skinname.toLowerCase().includes(searchTerm)
+    );
+  }
+
+  renderSearchResults(filtered);
+}
+
+function renderSearchResults(skins) {
+  const container = document.getElementById('searchResults');
+  container.innerHTML = '';
+
+  if (skins.length === 0) {
+    container.innerHTML = '<p>No matching skins found.</p>';
+    return;
+  }
+
+  skins.forEach(skin => {
+    const div = document.createElement('div');
+    div.className = 'four wide column';
+    div.innerHTML = `
+      <div class="ui card" style="cursor:pointer;" onclick="viewCollection(${skin.collectionId})">
+        <div class="content">
+          <div class="header" style="color:black;">${skin.gun} | ${skin.skinname}</div>
+          <div class="meta">
+            <span class="ui tiny label" style="background-color: ${getRarityHex(skin.rarity)}; color:white;">${skin.rarity}</span>
+          </div>
+          <small>${skin.collectionName}</small>
+        </div>
+      </div>
+    `;
+    container.appendChild(div);
+  });
+}
+
+function viewCollection(id) {
+  window.location = `/collection/${id}`;
+}
+
+// Render Official and Private sections
+function renderCollections() {
+  const officialContainer = document.getElementById('officialCollections');
+  const privateContainer = document.getElementById('privateCollections');
+
+  officialContainer.innerHTML = '';
+  privateContainer.innerHTML = '';
+
+  allCollections.forEach(col => {
+    const card = document.createElement('div');
+    card.className = 'ui card';
+    card.style = 'display: inline-block; width: 220px; margin-right: 15px;';
+    card.innerHTML = `
+      <div class="image">
+        <img src="${col.image}" style="height: 140px; object-fit: cover;">
+      </div>
+      <div class="content">
+        <div class="header">${col.name}</div>
+        <div class="meta">${col.items ? col.items.length : 0} skins</div>
+      </div>
+    `;
+    card.onclick = () => window.location = `/collection/${col.id}`;
+
+    if (col.type === 'official') {
+      officialContainer.appendChild(card);
+    } else {
+      privateContainer.appendChild(card);
+    }
+  });
+}
+
+// Modal
 function showAddCollectionForm() {
   document.getElementById('addCollectionModal').classList.add('active');
 }
@@ -81,6 +188,13 @@ function hideAddCollectionModal() {
 function submitAddCollectionForm() {
   document.getElementById('addCollectionForm').submit();
 }
+
+// Initialize
+document.addEventListener('DOMContentLoaded', () => {
+  loadData();
+  renderCollections();
+  filterResults();
+});
 </script>
 
 {{> footer}}
